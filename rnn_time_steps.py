@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
-from time_series_transformer.pipeline import create_pipeline
+from ts_transformer.pipeline import create_pipeline
 
 LAG_COLS = ['adj_close', 'volume', 'adj_open', 'adj_low',
             'adj_high', 'ema', 'macd', 'macd_diff', 'macd_signal', 'psar',
@@ -38,7 +38,6 @@ pipeline = create_pipeline(group_col=GROUP_COL, date_col=DATE_COL, target_col=TA
                            time_step_trans=True)
 
 df = pipeline.fit_transform(stocks)
-
 
 scaler = pipeline.named_steps["scale"]
 reversed = scaler.inverse_transform(df)

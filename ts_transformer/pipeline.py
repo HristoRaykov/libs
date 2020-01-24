@@ -1,13 +1,13 @@
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
 
-from time_series_transformer.index_transformer import RowIndexTransformer
-from time_series_transformer.lag_creator import LagCreator
-from time_series_transformer.log_transformer import LogTransformer
-from time_series_transformer.one_hot_encoder import IndicatorVariables
-from time_series_transformer.poly_features import PartialPolyFeatures
-from time_series_transformer.scaler import DataFrameMinMaxScaler
-from time_series_transformer.time_steps import RNNTimeStepsTransformer
+from ts_transformer.index_transformer import RowIndexTransformer
+from ts_transformer.lag_creator import LagCreator
+from ts_transformer.log_transformer import LogTransformer
+from ts_transformer.one_hot_encoder import IndicatorVariables
+from ts_transformer.poly_features import PartialPolyFeatures
+from ts_transformer.scaler import DataFrameMinMaxScaler
+from ts_transformer.time_steps import RNNTimeStepsTransformer
 
 LAG_STEPS_NAME_SUFFIX = "_lags"
 

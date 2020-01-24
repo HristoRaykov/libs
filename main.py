@@ -1,50 +1,39 @@
 import numpy as np
 import pandas as pd
 
-from time_series_transformer.pipeline import create_pipeline
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
 
+from ts_train_test_split.train_test_split import split_time_series_by_time_steps
+from ts_transformer.pipeline import create_pipeline
 
+LAG_COLS = ['adj_close', 'volume', 'adj_open', 'adj_low',
+            'adj_high', 'ema', 'macd', 'macd_diff', 'macd_signal', 'psar',
+            'psar_up_ind', 'psar_down_ind', 'cci', 'stoch_osc', 'stoch_osc_signal',
+            'rsi', 'roc', 'bb_ma', 'bb_hb', 'bb_hb_ind', 'bb_lb', 'bb_lb_ind',
+            'atr', 'std', 'cmf', 'obv', 'vwap']
 
-NOT_IND_VARS_COLS = ['ticker', 'exchange', 'name', 'industry', "date"]
+COLS_TO_DROP = ['open', 'close', 'low', 'high', "industry", "name", "exchange"]
 
-NOT_SCALE_COLS = ['ticker', 'exchange', 'name', 'industry', "date", "adj_close"]
+TIME_INDEPENDENT_COLS = []
 
+GROUP_COL = "ticker"
+DATE_COL = "date"
+TARGET_COL = "adj_close"
 
-# LAG_COLS = ["adj_close", 'adj_open', 'adj_low', 'adj_high', "volume", 'ema', 'macd']
-#
-# NOT_IND_VARS_COLS = ['ticker', "date"]
-#
-# NOT_SCALE_COLS = ['ticker', "date", "adj_close"]
+LAG_SUFFIX_KW = "_lag_"
+LAG_DIFF_SUFFIX_KW = "_lag_diff_"
 
-all_stocks = pd.read_csv("/home/hristocr/Desktop/tech_ind_time_series.csv")
-
-stocks = all_stocks[all_stocks["ticker"].isin(["AAPL", "GS"])]
+stocks = pd.read_csv("/home/hristocr/Desktop/dataset.csv")
 stocks["date"] = stocks["date"].astype(np.datetime64)
 
-# test_data = stocks[
-# 	["ticker", "date", "sector", "adj_close", 'adj_open', 'adj_low', 'adj_high', "volume", 'ema', 'macd']]
-
-pipeline = create_pipeline(group_col="ticker", target_col="adj_close",
+pipeline = create_pipeline(group_col=GROUP_COL, date_col=DATE_COL, target_col=TARGET_COL,
                            create_lags=True, lag_cols=LAG_COLS, lag_num=5, drop_lag_col=True,
-                           create_ind_vars=True, not_ind_vars_cols=NOT_IND_VARS_COLS,
-                           scale=True, not_scale_cols=NOT_SCALE_COLS)
+                           trans_index=True,
+                           create_ind_vars=True,
+                           time_step_trans=True)
 
-dataset = pipeline.fit_transform(stocks)
+df = pipeline.fit_transform(stocks)
 
-dataset.to_csv("/home/hristocr/Desktop/dataset.csv", index=False)
-
-dataset = dataset.set_index(["ticker", "date"])
-
-
-
-df = pd.DataFrame(np.random.random((2, 6)))
-df.columns = pd.MultiIndex.from_product([["lag_1", "lag_2", "lag_3"], ['feature_1', 'feature_2']], names=["lags", "features"])
-df.index.name = "samples"
-df
-
-
-df1 = pd.DataFrame(np.random.random((2,1)))
-df1
-
-df2 = pd.concat([df,df1], axis=1)
-df2.columns
+train, test = split_time_series_by_time_steps(df, n_time_steps=5)

@@ -2,7 +2,7 @@ import pandas as pd
 
 from sklearn.base import BaseEstimator, TransformerMixin
 
-from time_series_transformer.constants import LAG_SUFFIX_KW
+from ts_transformer.constants import LAG_SUFFIX_KW
 
 
 class RNNTimeStepsTransformer(BaseEstimator, TransformerMixin):
